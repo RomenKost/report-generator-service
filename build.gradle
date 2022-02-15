@@ -1,0 +1,36 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.kostenko'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation 'org.glassfish:jsonp-jaxrs-1x:1.1.6'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'org.json:json:20211205'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.projectlombok:lombok:1.18.22'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    testAnnotationProcessor('org.projectlombok:lombok:1.18.22')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}
