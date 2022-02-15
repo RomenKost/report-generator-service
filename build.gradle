@@ -25,8 +25,12 @@ dependencies {
     implementation 'org.json:json:20211205'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.projectlombok:lombok:1.18.22'
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
     testAnnotationProcessor('org.projectlombok:lombok:1.18.22')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

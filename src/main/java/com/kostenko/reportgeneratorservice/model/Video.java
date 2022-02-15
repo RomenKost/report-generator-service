@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class YoutubeVideoDto {
+public class Video {
     private String videoId;
     private String title;
     private String description;

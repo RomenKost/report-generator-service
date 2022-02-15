@@ -1,0 +1,22 @@
+server:
+  port: 9000
+spring:
+  devtools:
+    restart:
+      additional-exclude: reports/**
+urls:
+  channel-statistic: http://{address}:{port}/statistic?id={id}
+  video-statistic: http://{address}:{port}/videos?id={id}
+  health: http://{address}:{port}/actuator/health
+channels:
+  id:
+    - UC6bTF68IAV1okfRfwXIP1Cg
+application:
+  delay: 10000
+  patterns:
+    time: yyyy-MM-dd_HH-mm-ss-SSS
+    report: report%s%s.rpt
+  reports-folder: /reports
+youtube-analytic-service:
+  address: 0.0.0.0
+  port: 8090

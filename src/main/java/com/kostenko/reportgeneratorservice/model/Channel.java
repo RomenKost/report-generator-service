@@ -5,7 +5,8 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class YoutubeChannelDto {
+public class Channel {
+    private String channelId;
     private String title;
     private String description;
     private String country;
