@@ -26,7 +26,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.projectlombok:lombok:1.18.22'
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
 
     testAnnotationProcessor('org.projectlombok:lombok:1.18.22')
