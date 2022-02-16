@@ -1,12 +1,13 @@
 package com.kostenko.reportgeneratorservice.service.client.impl;
 
 
-import com.kostenko.reportgeneratorservice.entity.URLParameters;
-import com.kostenko.reportgeneratorservice.entity.URLs;
 import com.kostenko.reportgeneratorservice.dto.DTOs;
 import com.kostenko.reportgeneratorservice.dto.ChannelDto;
 import com.kostenko.reportgeneratorservice.dto.VideoDto;
+import com.kostenko.reportgeneratorservice.logger.LoggerChecker;
 import com.kostenko.reportgeneratorservice.service.client.AnalyticClient;
+import com.kostenko.reportgeneratorservice.service.client.impl.youtubeanalyticclient.URLParameters;
+import com.kostenko.reportgeneratorservice.service.client.impl.youtubeanalyticclient.YoutubeAnalyticClient;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -31,22 +32,31 @@ class YoutubeAnalyticClientTest {
     private final String address = "any_address";
     private final String port = "any_port";
 
+    private final String youtubeAnalyticClientHealthUrl = "Any_health_url.";
+    private final String channelStatisticUrl = "Any channel statistic url.";
+    private final String videoStatisticUrl = "Any video statistic url";
+
     @BeforeAll
     public void initialize() {
         restTemplate = mock(RestTemplate.class);
-        analyticClient = new YoutubeAnalyticClient(restTemplate, address, port);
+        analyticClient = new YoutubeAnalyticClient(
+                restTemplate, address, port,
+                youtubeAnalyticClientHealthUrl,
+                channelStatisticUrl,
+                videoStatisticUrl
+        );
     }
 
     @Test
     void isAliveTrueTest() {
-        Mockito.when(restTemplate.getForObject(URLs.HEALTH.getUrl(), String.class, getAddressAndPortMap()))
+        Mockito.when(restTemplate.getForObject(youtubeAnalyticClientHealthUrl, String.class, getAddressAndPortMap()))
                 .thenReturn("everything");
         assertTrue(analyticClient.isAlive());
     }
 
     @Test
     void isAliveFalseTest() {
-        Mockito.when(restTemplate.getForObject(URLs.HEALTH.getUrl(), String.class, getAddressAndPortMap()))
+        Mockito.when(restTemplate.getForObject(youtubeAnalyticClientHealthUrl, String.class, getAddressAndPortMap()))
                 .thenThrow(new RestClientException("any text"));
         assertFalse(analyticClient.isAlive());
     }
@@ -54,7 +64,7 @@ class YoutubeAnalyticClientTest {
     @Test
     void getYoutubeChannelDtoTest() {
         String anyId = "any_id";
-        Mockito.when(restTemplate.getForObject(URLs.CHANNEL_STATISTIC.getUrl(), ChannelDto.class, getAddressPortAndId(anyId)))
+        Mockito.when(restTemplate.getForObject(channelStatisticUrl, ChannelDto.class, getAddressPortAndId(anyId)))
                 .thenReturn(DTOs.getChannel());
         ChannelDto excepted = DTOs.getChannel();
         ChannelDto actual = analyticClient.getChannelDto(anyId);
@@ -66,7 +76,7 @@ class YoutubeAnalyticClientTest {
     void getYoutubeVideoDtoArray() {
         String anyId = "anyId";
 
-        Mockito.when(restTemplate.getForObject(URLs.VIDEO_STATISTIC.getUrl(), VideoDto[].class, getAddressPortAndId(anyId)))
+        Mockito.when(restTemplate.getForObject(videoStatisticUrl, VideoDto[].class, getAddressPortAndId(anyId)))
                 .thenReturn(DTOs.getVideos());
 
         VideoDto[] expected = DTOs.getVideos();

@@ -1,4 +1,4 @@
-package com.kostenko.reportgeneratorservice.entity;
+package com.kostenko.reportgeneratorservice.service.client.impl.youtubeanalyticclient;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

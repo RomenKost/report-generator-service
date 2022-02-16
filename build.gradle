@@ -15,22 +15,20 @@ repositories {
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.22'
 
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
-    implementation 'org.glassfish:jsonp-jaxrs-1x:1.1.6'
-    implementation 'com.google.code.gson:gson:2.8.9'
-    implementation 'org.json:json:20211205'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.projectlombok:lombok:1.18.22'
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
 
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
     testAnnotationProcessor('org.projectlombok:lombok:1.18.22')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

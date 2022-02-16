@@ -3,6 +3,7 @@ package com.kostenko.reportgeneratorservice.service.reportsaver.impl;
 import com.kostenko.reportgeneratorservice.model.Report;
 import com.kostenko.reportgeneratorservice.mapper.reporttostringmapper.ReportToStringMapper;
 import com.kostenko.reportgeneratorservice.service.reportsaver.ReportSaver;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Slf4j
 @Service
 public class FileReportSaver implements ReportSaver {
     private final DateFormat dateFormat;
@@ -32,16 +34,25 @@ public class FileReportSaver implements ReportSaver {
 
     @Override
     public void save(Report report) throws IOException {
-        File reportFile = generateFile(report.getId(), new Date());
+        log.info("Saving report about channel with id=" + report.getId() + "...");
+
+        String reportFileName = generateFilename(report.getId(), new Date());
+        File reportFile = createFileForReport(reportFileName);
+        log.info("File for containing report with id=" + report.getId() + "was created.");
+
         String reportString = reportToStringMapper.reportToString(report);
         writeReport(reportFile, reportString);
+        log.info("Report about channel with id=" + report.getId() + " was saved to the file: " + reportFile.getAbsolutePath());
     }
 
-    private File generateFile(String id, Date date) throws IOException {
+    private String generateFilename(String id, Date date) {
+        return String.format(reportPattern, id, dateFormat.format(date));
+    }
+
+    private File createFileForReport(String reportFileName) throws IOException {
         File reportDir = new File(reportsDirName);
         Path reportDirPath = reportDir.toPath();
 
-        String reportFileName = String.format(reportPattern, id, dateFormat.format(date));
         Path reportPath = reportDirPath.resolve(reportFileName);
         File reportFile = reportPath.toFile();
 

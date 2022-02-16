@@ -2,12 +2,10 @@ package com.kostenko.reportgeneratorservice.service.reportservice.impl;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.IThrowableProxy;
-import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.read.ListAppender;
 import com.kostenko.reportgeneratorservice.config.ApplicationProperties;
 import com.kostenko.reportgeneratorservice.dto.DTOs;
-import com.kostenko.reportgeneratorservice.entity.Logs;
+import com.kostenko.reportgeneratorservice.logger.LoggerChecker;
 import com.kostenko.reportgeneratorservice.mapper.DtoToModelMapper;
 import com.kostenko.reportgeneratorservice.model.Models;
 import com.kostenko.reportgeneratorservice.service.client.AnalyticClient;
@@ -21,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,7 +66,9 @@ class YoutubeReportServiceTest {
 
         youtubeReportService.loadAnalyticService();
 
-        checkLog(Level.WARN, Logs.UNAVAILABLE.getMessage());
+        Iterator<ILoggingEvent> eventIterator = listAppender.list.listIterator();
+        LoggerChecker.checkLog(eventIterator, Level.WARN, "Youtube analytic server is unavailable.");
+        assertFalse(eventIterator.hasNext());
     }
 
     @Test
@@ -89,7 +90,14 @@ class YoutubeReportServiceTest {
 
         Mockito.verify(reportSaver)
                 .save(Models.getReport(anyId));
-        checkLog(Level.INFO, Logs.CREATED_REPORT.getMessage(anyId));
+
+
+        Iterator<ILoggingEvent> eventIterator = listAppender.list.listIterator();
+        LoggerChecker.checkLog(
+                eventIterator, Level.INFO,
+                "Youtube analytic server is available, count ids to collecting information about channels: 1"
+        );
+        assertFalse(eventIterator.hasNext());
     }
 
     @Test
@@ -104,7 +112,19 @@ class YoutubeReportServiceTest {
 
         youtubeReportService.loadAnalyticService();
 
-        checkErrorLog(Logs.MICROSERVICE_DISCONNECTED.getMessage(), restClientException);
+        Iterator<ILoggingEvent> eventIterator = listAppender.list.listIterator();
+
+        LoggerChecker.checkLog(
+                eventIterator, Level.INFO,
+                "Youtube analytic server is available, count ids to collecting information about channels: 1"
+        );
+        LoggerChecker.checkErrorLog(
+                eventIterator,
+                "Information about channel with id=" + anyId + " wasn't collected.",
+                restClientException
+        );
+
+        assertFalse(eventIterator.hasNext());
     }
 
     @Test
@@ -128,26 +148,18 @@ class YoutubeReportServiceTest {
 
         youtubeReportService.loadAnalyticService();
 
-        checkErrorLog(Logs.REPORT_SAVING_EXCEPTION.getMessage(), savingException);
-    }
+        Iterator<ILoggingEvent> eventIterator = listAppender.list.listIterator();
 
-    private void checkLog(Level expectedLevel, String expectedMessage) {
-        assertEquals(1, listAppender.list.size());
-        ILoggingEvent loggingEvent = listAppender.list.get(0);
+        LoggerChecker.checkLog(
+                eventIterator, Level.INFO,
+                "Youtube analytic server is available, count ids to collecting information about channels: 1"
+        );
+        LoggerChecker.checkErrorLog(
+                eventIterator,
+                "Unavailable to save report about channel with id=" + anyId,
+                savingException
+        );
 
-        assertEquals(expectedLevel, loggingEvent.getLevel());
-        assertEquals(expectedMessage, loggingEvent.getMessage());
-    }
-
-    private void checkErrorLog(String expectedMessage, Exception expectedException) {
-        assertEquals(1, listAppender.list.size());
-        ILoggingEvent loggingEvent = listAppender.list.get(0);
-
-        assertEquals(Level.ERROR, loggingEvent.getLevel());
-        assertEquals(expectedMessage, loggingEvent.getMessage());
-
-        IThrowableProxy iThrowableProxy = loggingEvent.getThrowableProxy();
-        assertTrue(iThrowableProxy instanceof ThrowableProxy);
-        assertEquals(expectedException, ((ThrowableProxy) iThrowableProxy).getThrowable());
+        assertFalse(eventIterator.hasNext());
     }
 }

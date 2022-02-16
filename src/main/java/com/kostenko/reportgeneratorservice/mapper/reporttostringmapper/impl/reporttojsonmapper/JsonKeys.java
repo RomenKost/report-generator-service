@@ -1,4 +1,4 @@
-package com.kostenko.reportgeneratorservice.mapper.reporttostringmapper.impl;
+package com.kostenko.reportgeneratorservice.mapper.reporttostringmapper.impl.reporttojsonmapper;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

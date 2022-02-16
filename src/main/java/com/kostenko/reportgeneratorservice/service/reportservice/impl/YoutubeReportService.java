@@ -1,7 +1,6 @@
 package com.kostenko.reportgeneratorservice.service.reportservice.impl;
 
 import com.kostenko.reportgeneratorservice.config.ApplicationProperties;
-import com.kostenko.reportgeneratorservice.entity.Logs;
 import com.kostenko.reportgeneratorservice.dto.ChannelDto;
 import com.kostenko.reportgeneratorservice.dto.VideoDto;
 import com.kostenko.reportgeneratorservice.mapper.DtoToModelMapper;
@@ -42,9 +41,10 @@ public class YoutubeReportService implements ReportService {
     @Scheduled(fixedDelayString = "${application.delay}")
     public void loadAnalyticService() {
         if (analyticClient.isAlive()) {
+            log.info("Youtube analytic server is available, count ids to collecting information about channels: " + ids.size());
             ids.forEach(this::processId);
         } else {
-            log.warn(Logs.UNAVAILABLE.getMessage());
+            log.warn("Youtube analytic server is unavailable.");
         }
     }
 
@@ -58,12 +58,10 @@ public class YoutubeReportService implements ReportService {
 
             Report report = new Report(id, channel, videos);
             reportSaver.save(report);
-
-            log.info(Logs.CREATED_REPORT.getMessage(id));
         } catch (IOException e) {
-            log.error(Logs.REPORT_SAVING_EXCEPTION.getMessage(), e);
+            log.error("Unavailable to save report about channel with id=" + id, e);
         } catch (RestClientException e) {
-            log.error(Logs.MICROSERVICE_DISCONNECTED.getMessage(), e);
+            log.error("Information about channel with id=" + id + " wasn't collected.", e);
         }
     }
 }
