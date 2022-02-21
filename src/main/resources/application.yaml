@@ -5,8 +5,8 @@ spring:
     restart:
       additional-exclude: reports/**
 urls:
-  channel-statistic: http://{address}:{port}/statistic?id={id}
-  video-statistic: http://{address}:{port}/videos?id={id}
+  channel-statistic: http://{address}:{port}/youtube/analytic/v1/channels/{channelId}
+  video-statistic: http://{address}:{port}/youtube/analytic/v1/videos/{channelId}
   health: http://{address}:{port}/actuator/health
 channels:
   id:

@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum URLParameters {
     ADDRESS("address"),
     PORT("port"),
-    ID("id");
+    ID("channelId");
 
     private final String name;
 }
