@@ -4,19 +4,34 @@ spring:
   devtools:
     restart:
       additional-exclude: reports/**
-urls:
-  channel-statistic: http://{address}:{port}/youtube/analytic/v1/channels/{channelId}
-  video-statistic: http://{address}:{port}/youtube/analytic/v1/videos/{channelId}
-  health: http://{address}:{port}/actuator/health
-channels:
-  id:
-    - UC6bTF68IAV1okfRfwXIP1Cg
-application:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/report-generator
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    platform: postgresql
+  flyway:
+    url: jdbc:postgresql://localhost:5433/report-generator
+    user: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    baselineOnMigrate: true
+    enabled: true
+report-generator:
   delay: 10000
+  enabled: true
   patterns:
     time: yyyy-MM-dd_HH-mm-ss-SSS
     report: report%s%s.rpt
-  reports-folder: /reports
-youtube-analytic-service:
-  address: 0.0.0.0
-  port: 8090
+  folder: /reports
+youtube-analytic:
+  server:
+    address: 0.0.0.0
+    port: 8099
+  urls:
+    channelsURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/youtube/analytic/v1/channels/%s
+    videosURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/youtube/analytic/v1/channels/%s/videos
+    healthURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/actuator/health
+    loginURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/youtube/analytic/v1/login
+  credentials:
+    username: admin
+    password: admin
