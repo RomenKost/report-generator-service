@@ -1,0 +1,37 @@
+server:
+  port: 9000
+spring:
+  devtools:
+    restart:
+      additional-exclude: reports/**
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    platform: postgresql
+  flyway:
+    url: ${DATABASE_URL}
+    user: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    baselineOnMigrate: true
+    enabled: true
+report-generator:
+  delay: 10000
+  enabled: true
+  patterns:
+    time: yyyy-MM-dd_HH-mm-ss-SSS
+    report: report%s%s.rpt
+  folder: /Users/user/IdeaProjects/report-generator-service/src/main/resources/reports
+youtube-analytic:
+  server:
+    address: 0.0.0.0
+    port: 8080
+  urls:
+    channelsURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/youtube/analytic/v1/channels/%s
+    videosURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/youtube/analytic/v1/channels/%s/videos
+    healthURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/actuator/health
+    loginURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/youtube/analytic/v1/login
+  credentials:
+    username: ${ANALYTIC_SERVICE_USERNAME}
+    password: ${ANALYTIC_SERVICE_PASSWORD}
