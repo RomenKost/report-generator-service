@@ -1,6 +1,5 @@
 package com.kostenko.report.generator.service.analytic.security.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kostenko.report.generator.dto.security.CredentialsDto;
 import com.kostenko.report.generator.dto.security.TokenDto;
 import com.kostenko.report.generator.exception.YoutubeAnalyticServiceUnavailableException;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-
 import static org.springframework.web.client.HttpClientErrorException.*;
 import static com.kostenko.report.generator.exception.message.ErrorMessages.*;
 import static org.springframework.http.HttpMethod.POST;
@@ -25,8 +22,6 @@ import static org.springframework.http.HttpMethod.POST;
 @Service
 @AllArgsConstructor
 public class DefaultYoutubeAnalyticSecurityClient implements YoutubeAnalyticSecurityClient {
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     private final YoutubeAnalyticCredentialsProperties credentialsProperties;
     private final YoutubeAnalyticUrlsProperties urlsProperties;
 
@@ -36,10 +31,13 @@ public class DefaultYoutubeAnalyticSecurityClient implements YoutubeAnalyticSecu
     public String getToken() {
         try {
             log.info("Loading token...");
-            ResponseEntity<String> response = getLoginResponse();
-            String token = objectMapper.readValue(response.getBody(), TokenDto.class).getToken();
+            ResponseEntity<TokenDto> response = getLoginResponse();
+            TokenDto token = response.getBody();
+            if(token == null || token.getToken() == null) {
+                throw new YoutubeAnalyticServiceUnavailableException(IMPOSSIBLE_LOAD_TOKEN);
+            }
             log.info("Token was loaded.");
-            return token;
+            return token.getToken();
         } catch (NotFound e) {
             log.error(INVALID_USERNAME, e);
             throw new YoutubeAnalyticServiceUnavailableException(INVALID_USERNAME, e);
@@ -52,20 +50,17 @@ public class DefaultYoutubeAnalyticSecurityClient implements YoutubeAnalyticSecu
         } catch (RestClientException e) {
             log.error(YOUTUBE_ANALYTIC_SERVICE_UNAVAILABLE, e);
             throw new YoutubeAnalyticServiceUnavailableException(YOUTUBE_ANALYTIC_SERVICE_UNAVAILABLE, e);
-        } catch (IOException e) {
-            log.error(UNSUPPORTED_RESPONSE_FORMAT, e);
-            throw new YoutubeAnalyticServiceUnavailableException(UNSUPPORTED_RESPONSE_FORMAT, e);
         }
     }
 
-    private ResponseEntity<String> getLoginResponse() {
+    private ResponseEntity<TokenDto> getLoginResponse() {
         CredentialsDto credentialsDto = new CredentialsDto(
                 credentialsProperties.getUsername(),
                 credentialsProperties.getPassword()
         );
         HttpEntity<CredentialsDto> credentialsDtoHttpEntity = new HttpEntity<>(credentialsDto);
         return restTemplate.exchange(
-                urlsProperties.getLoginURL(), POST, credentialsDtoHttpEntity, String.class
+                urlsProperties.getLoginURL(), POST, credentialsDtoHttpEntity, TokenDto.class
         );
     }
 }

@@ -6,12 +6,12 @@ spring:
       additional-exclude: reports/**
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/report-generator
+    url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     platform: postgresql
   flyway:
-    url: jdbc:postgresql://localhost:5433/report-generator
+    url: ${DATABASE_URL}
     user: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     baselineOnMigrate: true
@@ -22,16 +22,16 @@ report-generator:
   patterns:
     time: yyyy-MM-dd_HH-mm-ss-SSS
     report: report%s%s.rpt
-  folder: /reports
+  folder: /Users/user/IdeaProjects/report-generator-service/src/main/resources/reports
 youtube-analytic:
   server:
     address: 0.0.0.0
-    port: 8099
+    port: 8080
   urls:
     channelsURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/youtube/analytic/v1/channels/%s
     videosURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/youtube/analytic/v1/channels/%s/videos
     healthURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/actuator/health
     loginURL: http://${youtube-analytic.server.address}:${youtube-analytic.server.port}/youtube/analytic/v1/login
   credentials:
-    username: admin
-    password: admin
+    username: ${ANALYTIC_SERVICE_USERNAME}
+    password: ${ANALYTIC_SERVICE_PASSWORD}

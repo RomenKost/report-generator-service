@@ -1,7 +1,5 @@
 package com.kostenko.report.generator.service.report.saver.impl;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.kostenko.report.generator.dto.report.ReportDto;
 import com.kostenko.report.generator.exception.message.ErrorMessages;
@@ -21,8 +19,7 @@ import java.util.Date;
 @Service
 @AllArgsConstructor
 public class FileReportSaver implements ReportSaver {
-    private final ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
-
+    private final ObjectWriter writer;
     private final ReportMapper reportMapper;
     private final ReportSaverProperties properties;
 
@@ -45,7 +42,7 @@ public class FileReportSaver implements ReportSaver {
         }
     }
 
-    private String generateFilename(String id, Date date) {
+    String generateFilename(String id, Date date) {
         return String.format(
                 properties.getPatterns().getReport(),
                 id,
@@ -53,7 +50,7 @@ public class FileReportSaver implements ReportSaver {
         );
     }
 
-    private File createFileForReport(String reportFileName) throws IOException {
+    File createFileForReport(String reportFileName) throws IOException {
         File reportDir = new File(properties.getFolder());
         Path reportDirPath = reportDir.toPath();
 
